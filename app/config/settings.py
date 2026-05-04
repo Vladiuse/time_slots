@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     # apps
     "users.apps.UsersConfig",
     "clients.apps.ClientsConfig",
+    "containers.apps.ContainersConfig",
 ]
 
 MIDDLEWARE = [
