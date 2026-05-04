@@ -1,0 +1,66 @@
+[project]
+name = "onboarding-bot"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 119
+exclude = ["_temp", ".venv"]
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+select = ["ALL"]
+ignore = [
+  "COM819",
+  "ANN204",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
+  "FA102",
+  "RUF001",  # ambiguous-unicode-character-string
+  "PERF203", # try-except-in-loop
+  "D203",    # incorrect-blank-line-before-class
+  "D213",    # multi-line-summary-second-line
+  "EM101",   # raw-string-in-exception
+  "TRY003",  # raise-vanilla-args
+  "EM102",   # f-string-in-exception
+  "TC006",   # runtime-cast-value
+  "TD002",   # todo author
+  "TD003",   # todo link
+  "FIX002",  #allow todo
+
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*.py" = ["ALL"]
+"manage.py" = ["ALL"]
+"**/views.py" = [
+  "A002", # builtin-argument-shadowing
+]
+
+"**/test_*.py" = [
+  "PT027",   # self.assertRaises
+  "PLR2004", # Magic value used in comparison
+  "PT004",
+  "S101",    # assert find
+  "SLF001",  # Private member accessed
+  "DTZ001",  # `datetime.datetime()` called without a `tzinfo` arg
+  "FBT001",  # Boolean-typed positional argument in function definition
+]
+
+"**/scripts/*.py" = [
+  "T201", # print
+  "T203", # pprint
+]
+"**/scripts/**/x.py" = ["ALL"]
+"**/scripts/**/x_*.py" = ["ALL"]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
