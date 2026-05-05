@@ -1,8 +1,15 @@
+from clients.models import Client
 from django.core.validators import MaxValueValidator
 from django.db import models
 
 
 class Container(models.Model):
+    class Status(models.TextChoices):
+        ON_STATION = "on_station", "На станции"
+        PICKED_UP = "picked_up", "Забран"
+
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="containers")
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.ON_STATION)
     number = models.CharField(max_length=11)
     client_name = models.CharField(max_length=30)
     start_date = models.DateTimeField(default=None, null=True)
