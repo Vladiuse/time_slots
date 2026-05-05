@@ -1,1 +1,3 @@
-from .converter import UnloadingBookTextConverter
+from .main import UploadBookReader
+
+__all__ = ["UploadBookReader"]
