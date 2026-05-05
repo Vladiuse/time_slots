@@ -22,21 +22,20 @@ class ContainerSyncResult:
 def sync_containers(uploading: list[UploadingContainer]) -> ContainerSyncResult:
     file_numbers: set[str] = {dto.container_number for dto in uploading}
 
-    db_containers = Container.objects.all()
+    db_containers = list(Container.objects.all())
     existing_numbers: set[str] = {container.number for container in db_containers}
     on_station_numbers: set[str] = {
         container.number
         for container in db_containers
         if container.status == Container.Status.ON_STATION
     }
-
     picked_up_numbers = on_station_numbers - file_numbers
     if picked_up_numbers:
         Container.objects.filter(number__in=picked_up_numbers).update(status=Container.Status.PICKED_UP)
+
     clients_by_source: dict[str, Client] = {
         client.source_name: client for client in Client.objects.all()
     }
-
     to_create: list[Container] = []
     skipped: list[UploadingContainer] = []
     for dto in uploading:
