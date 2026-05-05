@@ -3,5 +3,143 @@
 {% block title %}Контейнеры{% endblock %}
 
 {% block content %}
+<div class="row g-3">
 
+    <div class="col-9">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="mb-0 fw-bold">Контейнеры на станции</h6>
+                <span class="badge bg-primary rounded-pill" id="selectedCount">Выбрано: 0</span>
+            </div>
+            <div class="card-body p-0" style="max-height: 72vh; overflow-y: auto;">
+                <table class="table table-hover table-sm mb-0 fs-8">
+                    <thead class="table-light sticky-top">
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="checkAll" class="form-check-input">
+                            </th>
+                            <th>#</th>
+                            <th>Номер</th>
+                            <th>Накладная</th>
+                            <th>Отпр. №</th>
+                            <th>Масса</th>
+                            <th>Уч.</th>
+                            <th>Прибытие</th>
+                            <th>Убытие</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="containerTable">
+                        {% for container in containers %}
+                        <tr class="container-row" data-number="{{ container.number }}">
+                            <td>
+                                <input type="checkbox" class="form-check-input container-check"
+                                       value="{{ container.number }}"
+                                       data-number="{{ container.number }}">
+                            </td>
+                            <td class="text-muted">{{ forloop.counter }}</td>
+                            <td class="fw-semibold">{{ container.number }}</td>
+                            <td>{{ container.nn|default:"—" }}</td>
+                            <td>{{ container.send_number|default:"—" }}</td>
+                            <td>{{ container.weight|default:"—" }}</td>
+                            <td>{{ container.area|default:"—" }}</td>
+                            <td>{{ container.start_date|date:"d.m.Y"|default:"—" }}</td>
+                            <td>{{ container.end_date|date:"d.m.Y"|default:"—" }}</td>
+                            <td>
+                                {% if container.status == "on_station" %}
+                                    <span class="badge bg-success fs-8">На станции</span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-8">Забран</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-4">Контейнеры не найдены</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-file-alt me-2"></i>Заявка
+                </h6>
+            </div>
+            <div class="card-body d-flex flex-column gap-3">
+
+                <div>
+                    <label class="form-label fs-7 fw-semibold">Дата выгрузки</label>
+                    <input type="date" class="form-control form-control-sm" id="reqDate">
+                </div>
+
+                <div>
+                    <label class="form-label fs-7 fw-semibold">Выбранные контейнеры</label>
+                    <div id="selectedList" class="border rounded p-2 bg-light fs-8"
+                         style="min-height: 80px; max-height: 200px; overflow-y: auto;">
+                        <span class="text-muted">Не выбрано</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm w-100 mt-auto" id="openSlotsBtn" disabled>
+                    <i class="fas fa-calendar-check me-1"></i>Выбрать слот
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const checkAll = document.getElementById("checkAll");
+    const checks = document.querySelectorAll(".container-check");
+    const selectedList = document.getElementById("selectedList");
+    const selectedCount = document.getElementById("selectedCount");
+    const openSlotsBtn = document.getElementById("openSlotsBtn");
+
+    function updateSelected() {
+        const checked = [...checks].filter(ch => ch.checked);
+
+        selectedCount.textContent = `Выбрано: ${checked.length}`;
+        openSlotsBtn.disabled = checked.length === 0;
+
+        document.querySelectorAll(".container-row").forEach(row => {
+            const ch = row.querySelector(".container-check");
+            row.classList.toggle("table-success", ch.checked);
+        });
+
+        if (checked.length === 0) {
+            selectedList.innerHTML = `<span class="text-muted">Не выбрано</span>`;
+            return;
+        }
+
+        selectedList.innerHTML = checked.map(ch =>
+            `<div class="d-flex justify-content-between align-items-center mb-1">
+                <span>${ch.dataset.number}</span>
+                <i class="fas fa-times text-danger" style="cursor:pointer"
+                   onclick="removeContainer('${ch.value}')"></i>
+             </div>`
+        ).join("");
+    }
+
+    function removeContainer(number) {
+        const ch = document.querySelector(`.container-check[value="${number}"]`);
+        if (ch) { ch.checked = false; updateSelected(); }
+    }
+
+    checkAll.addEventListener("change", () => {
+        checks.forEach(ch => ch.checked = checkAll.checked);
+        updateSelected();
+    });
+
+    checks.forEach(ch => ch.addEventListener("change", updateSelected));
+</script>
 {% endblock %}
