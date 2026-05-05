@@ -1,0 +1,7 @@
+import re
+
+CONTAINER_NUMBER_REGEX = r"[A-zА-я]{4}\d{7}"
+
+
+def is_line_contain_container(line: str) -> bool:
+    return bool(re.search(CONTAINER_NUMBER_REGEX, line))
