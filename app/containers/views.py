@@ -10,5 +10,6 @@ def containers_list(request: HttpRequest) -> HttpResponse:
     containers = Container.objects.filter(client=client)
     content = {
         "containers": containers,
+        "status_on_station": Container.Status.ON_STATION,
     }
     return render(request, "containers/container_list.html", content)

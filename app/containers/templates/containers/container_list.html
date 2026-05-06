@@ -152,9 +152,11 @@
                         {% for container in containers %}
                         <tr class="container-row" data-number="{{ container.number }}">
                             <td>
+                                {% if container.status == status_on_station %}
                                 <input type="checkbox" class="form-check-input container-check"
                                        value="{{ container.number }}"
                                        data-number="{{ container.number }}">
+                                {% endif %}
                             </td>
                             <td class="text-muted">{{ forloop.counter }}</td>
                             <td class="fw-semibold">{{ container.number }}</td>
