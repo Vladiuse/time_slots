@@ -33,7 +33,7 @@
                             {% if slot.is_blocked or slot.is_full %}<i class="fas fa-lock text-muted ms-1"></i>{% endif %}
                         </div>
                         <div class="slot-count">
-                            <span class="used text-{{ slot.color_class }}">{{ slot.current_count }}</span>
+                            <span class="used text-{{ slot.color_class }}">{{ slot.total_count }}</span>
                             <span class="limit">/ {{ slot.container_limit }}</span>
                         </div>
                         <div class="slot-progress">
