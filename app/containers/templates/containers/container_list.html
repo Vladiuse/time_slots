@@ -19,104 +19,30 @@
     <div class="card-body">
         <div class="row g-2">
 
+            {% for slot in slots %}
             <div class="col-2">
-                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="00:00 — 04:00">
-                    <div class="slot-fill bg-success-soft" style="width: 17%;"></div>
-                    <div class="slot-content">
-                        <div class="slot-time">00:00 — 04:00</div>
-                        <div class="slot-count">
-                            <span class="used text-success">12</span>
-                            <span class="limit">/ 70</span>
-                        </div>
-                        <div class="slot-progress">
-                            <div class="bg-success" style="width: 17%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="04:00 — 08:00">
-                    <div class="slot-fill bg-success-soft" style="width: 4%;"></div>
-                    <div class="slot-content">
-                        <div class="slot-time">04:00 — 08:00</div>
-                        <div class="slot-count">
-                            <span class="used text-success">3</span>
-                            <span class="limit">/ 70</span>
-                        </div>
-                        <div class="slot-progress">
-                            <div class="bg-success" style="width: 4%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="08:00 — 12:00">
-                    <div class="slot-fill bg-warning-soft" style="width: 64%;"></div>
-                    <div class="slot-content">
-                        <div class="slot-time">08:00 — 12:00</div>
-                        <div class="slot-count">
-                            <span class="used text-warning">45</span>
-                            <span class="limit">/ 70</span>
-                        </div>
-                        <div class="slot-progress">
-                            <div class="bg-warning" style="width: 64%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="12:00 — 16:00">
-                    <div class="slot-fill bg-danger-soft" style="width: 92%;"></div>
-                    <div class="slot-content">
-                        <div class="slot-time">12:00 — 16:00</div>
-                        <div class="slot-count">
-                            <span class="used text-danger">60</span>
-                            <span class="limit">/ 65</span>
-                        </div>
-                        <div class="slot-progress">
-                            <div class="bg-danger" style="width: 92%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="slot-card disabled" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="16:00 — 20:00">
-                    <div class="slot-fill bg-dark-soft" style="width: 100%;"></div>
+                <div class="slot-card {% if slot.is_blocked %}disabled{% endif %}"
+                     data-slot-id="{{ slot.pk }}"
+                     data-date="{{ slot.date|date:'Y-m-d' }}"
+                     data-date-label="{{ slot.date|date:'d E Y' }}"
+                     data-time="{{ slot.time_range }}">
+                    <div class="slot-fill bg-{{ slot.color_class }}-soft" style="width: {{ slot.occupancy_percent }}%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">
-                            16:00 — 20:00
-                            <i class="fas fa-lock text-muted ms-1"></i>
+                            {{ slot.time_range }}
+                            {% if slot.is_blocked %}<i class="fas fa-lock text-muted ms-1"></i>{% endif %}
                         </div>
                         <div class="slot-count">
-                            <span class="used text-dark">55</span>
-                            <span class="limit">/ 55</span>
+                            <span class="used text-{{ slot.color_class }}">{{ slot.current_count }}</span>
+                            <span class="limit">/ {{ slot.container_limit }}</span>
                         </div>
                         <div class="slot-progress">
-                            <div class="bg-dark" style="width: 100%;"></div>
+                            <div class="bg-{{ slot.color_class }}" style="width: {{ slot.occupancy_percent }}%;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-2">
-                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="20:00 — 00:00">
-                    <div class="slot-fill bg-warning-soft" style="width: 59%;"></div>
-                    <div class="slot-content">
-                        <div class="slot-time">20:00 — 00:00</div>
-                        <div class="slot-count">
-                            <span class="used text-warning">41</span>
-                            <span class="limit">/ 70</span>
-                        </div>
-                        <div class="slot-progress">
-                            <div class="bg-warning" style="width: 59%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
     </div>
@@ -211,8 +137,7 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="slot_date" id="selectedSlotDate" value="">
-                <input type="hidden" name="slot_time" id="selectedSlotTime" value="">
+                <input type="hidden" name="slot_id" id="selectedSlotId" value="">
 
                 <button type="submit" class="btn btn-primary btn-sm w-100 flex-shrink-0" id="submitBtn" disabled>
                     <i class="fas fa-calendar-check me-1"></i>Подтвердить заявку
@@ -250,8 +175,7 @@
             slotBadgeDate.textContent = card.dataset.dateLabel;
             slotBadgeTime.textContent = card.dataset.time;
 
-            document.getElementById("selectedSlotDate").value = card.dataset.date;
-            document.getElementById("selectedSlotTime").value = card.dataset.time;
+            document.getElementById("selectedSlotId").value = card.dataset.slotId;
             slotSelected = true;
             updateSubmitBtn();
         });

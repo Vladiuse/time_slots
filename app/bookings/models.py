@@ -7,6 +7,7 @@ class Slot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     is_blocked = models.BooleanField(default=False)
+    current_count = models.PositiveIntegerField(default=0)
     container_limit = models.PositiveIntegerField(default=50)
 
     class Meta:
@@ -14,7 +15,28 @@ class Slot(models.Model):
         ordering = ("date", "start_time")
 
     def __str__(self) -> str:
-        return f"{self.date} {self.start_time:%H:%M}—{self.end_time:%H:%M}"
+        return f"{self.date} {self.time_range}"
+
+    @property
+    def time_range(self) -> str:
+        return f"{self.start_time:%H:%M} — {self.end_time:%H:%M}"
+
+    @property
+    def occupancy_percent(self) -> int:
+        if self.container_limit == 0:
+            return 0
+        return round(self.current_count / self.container_limit * 100)
+
+    @property
+    def color_class(self) -> str:
+        if self.is_blocked or self.occupancy_percent >= 100:
+            return "dark"
+        if self.occupancy_percent >= 80:
+            return "danger"
+        if self.occupancy_percent >= 50:
+            return "warning"
+        return "success"
+
 
 
 class Booking(models.Model):
