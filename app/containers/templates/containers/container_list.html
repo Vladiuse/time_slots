@@ -48,8 +48,7 @@
     </div>
 </div>
 
-<form method="post" action="" class="row g-3 flex-grow-1" style="min-height: 0;">
-{% csrf_token %}
+<div class="row g-3 flex-grow-1" style="min-height: 0;">
 
     <div class="col-9 h-100">
         <div class="card shadow-sm h-100 d-flex flex-column">
@@ -112,7 +111,8 @@
         </div>
     </div>
 
-    <div class="col-3 h-100">
+    <form method="post" class="col-3 h-100">
+    {% csrf_token %}
         <div class="card shadow-sm h-100 d-flex flex-column">
             <div class="card-header bg-primary text-white py-3 flex-shrink-0">
                 <h6 class="mb-0 fw-bold">
@@ -145,9 +145,9 @@
 
             </div>
         </div>
-    </div>
+    </form>
 
-</form>
+</div>
 {% endblock %}
 
 {% block scripts %}
