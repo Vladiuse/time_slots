@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.views import View
 
-# Create your views here.
+
+class BookingCreateView(View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        slot_id = request.POST.get("slot_id")
+        container_numbers = request.POST.getlist("container_numbers")
+        return HttpResponse(f"slot_id={slot_id}, containers={container_numbers}")
