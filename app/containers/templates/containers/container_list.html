@@ -93,11 +93,7 @@
                             <td>{{ container.start_date|date:"d.m.Y"|default:"—" }}</td>
                             <td>{{ container.end_date|date:"d.m.Y"|default:"—" }}</td>
                             <td>
-                                {% if container.status == "on_station" %}
-                                    <span class="badge bg-success fs-8">На станции</span>
-                                {% else %}
-                                    <span class="badge bg-secondary fs-8">Забран</span>
-                                {% endif %}
+                                <span class="badge fs-8 status-{{ container.status }}">{{ container.get_status_display }}</span>
                             </td>
                         </tr>
                         {% empty %}

@@ -5,6 +5,12 @@
     font-size: 0.75rem;
 }
 
+/* CONTAINER STATUS */
+.status-on_station { background-color: #198754; color: #fff; }
+.status-in_booking { background-color: #0dcaf0; color: #000; }
+.status-picked_up  { background-color: #6c757d; color: #fff; }
+/* CONTAINER STATUS */
+
 /* LAYOUT */
 html, body {
     height: 100%;

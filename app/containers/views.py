@@ -12,7 +12,7 @@ from .models import Container
 def containers_list(request: HttpRequest) -> HttpResponse:
     client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
     slots = Slot.objects.filter(date=timezone.localdate()).order_by("start_time")
-    containers = Container.objects.filter(client=client, status=Container.Status.ON_STATION)
+    containers = Container.objects.filter(client=client).exclude(status=Container.Status.PICKED_UP)
     content = {
         "containers": containers,
         "status_on_station": Container.Status.ON_STATION,

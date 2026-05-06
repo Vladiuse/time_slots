@@ -6,6 +6,7 @@ from django.db import models
 class Container(models.Model):
     class Status(models.TextChoices):
         ON_STATION = "on_station", "На станции"
+        IN_BOOKING = "in_booking", "В заявке"
         PICKED_UP = "picked_up", "Забран"
 
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="containers")
