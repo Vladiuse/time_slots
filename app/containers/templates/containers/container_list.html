@@ -122,7 +122,8 @@
     </div>
 </div>
 
-<div class="row g-3 flex-grow-1" style="min-height: 0;">
+<form method="post" action="" class="row g-3 flex-grow-1" style="min-height: 0;">
+{% csrf_token %}
 
     <div class="col-9 h-100">
         <div class="card shadow-sm h-100 d-flex flex-column">
@@ -192,7 +193,7 @@
                     <i class="fas fa-file-alt me-2"></i>Заявка
                 </h6>
             </div>
-            <div class="card-body d-flex flex-column gap-3 p-3" style="min-height: 0;">
+            <div class="card-body d-flex flex-column gap-3 p-3" id="bookingForm" style="min-height: 0;">
 
                 <div class="booking-slot-badge w-100">
                     <div class="booking-slot-badge__date">
@@ -210,7 +211,10 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary btn-sm w-100 flex-shrink-0" id="submitBtn" disabled>
+                <input type="hidden" name="slot_date" id="selectedSlotDate" value="">
+                <input type="hidden" name="slot_time" id="selectedSlotTime" value="">
+
+                <button type="submit" class="btn btn-primary btn-sm w-100 flex-shrink-0" id="submitBtn" disabled>
                     <i class="fas fa-calendar-check me-1"></i>Подтвердить заявку
                 </button>
 
@@ -218,7 +222,7 @@
         </div>
     </div>
 
-</div>
+</form>
 {% endblock %}
 
 {% block scripts %}
@@ -233,7 +237,6 @@
 
     function updateSubmitBtn() {
         const hasContainers = [...checks].some(ch => ch.checked);
-        console.log(hasContainers)
         submitBtn.disabled = !(slotSelected && hasContainers);
     }
 
@@ -247,15 +250,8 @@
             slotBadgeDate.textContent = card.dataset.dateLabel;
             slotBadgeTime.textContent = card.dataset.time;
 
-            let hiddenInput = document.getElementById("selectedSlotDate");
-            if (!hiddenInput) {
-                hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "slot_date";
-                hiddenInput.id = "selectedSlotDate";
-                document.querySelector(".card-body.d-flex.flex-column").appendChild(hiddenInput);
-            }
-            hiddenInput.value = card.dataset.date;
+            document.getElementById("selectedSlotDate").value = card.dataset.date;
+            document.getElementById("selectedSlotTime").value = card.dataset.time;
             slotSelected = true;
             updateSubmitBtn();
         });
