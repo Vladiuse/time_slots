@@ -5,6 +5,30 @@
     font-size: 0.75rem;
 }
 
+/* LAYOUT */
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+nav.navbar {
+    flex-shrink: 0;
+}
+
+.app-main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
 /* SLOTS */
 .slot-card {
     position: relative;
