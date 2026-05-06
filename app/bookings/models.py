@@ -33,14 +33,13 @@ class Slot(models.Model):
 
     @property
     def color_class(self) -> str:
-        if self.is_blocked or self.occupancy_percent >= 100:
+        if self.is_blocked or self.occupancy_percent >= 100:  # noqa: PLR2004
             return "dark"
-        if self.occupancy_percent >= 80:
+        if self.occupancy_percent >= 80:  # noqa: PLR2004
             return "danger"
-        if self.occupancy_percent >= 50:
+        if self.occupancy_percent >= 50:  # noqa: PLR2004
             return "warning"
         return "success"
-
 
 
 class Booking(models.Model):
