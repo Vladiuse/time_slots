@@ -11,7 +11,7 @@
         </h6>
         <div class="d-flex align-items-center gap-2">
             <button class="btn btn-sm btn-outline-primary"><i class="fas fa-chevron-left"></i></button>
-            <input type="date" class="form-control form-control-sm" style="width: 160px;">
+            <input type="date" class="form-control form-control-sm" style="width: 160px;" value="{{ today|date:'Y-m-d' }}">
             <button class="btn btn-sm btn-outline-primary"><i class="fas fa-chevron-right"></i></button>
             <button class="btn btn-sm btn-primary ms-2">Сегодня</button>
         </div>
@@ -136,7 +136,7 @@
                     <thead class="table-light sticky-top">
                         <tr>
                             <th style="width: 40px;">
-                                <input type="checkbox" id="checkAll" class="form-check-input">
+                                <!-- <input type="checkbox" id="checkAll" class="form-check-input"> -->
                             </th>
                             <th>#</th>
                             <th>Номер</th>
