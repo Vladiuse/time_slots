@@ -20,7 +20,7 @@
         <div class="row g-2">
 
             <div class="col-2">
-                <div class="slot-card">
+                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="00:00 — 04:00">
                     <div class="slot-fill bg-success-soft" style="width: 17%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">00:00 — 04:00</div>
@@ -36,7 +36,7 @@
             </div>
 
             <div class="col-2">
-                <div class="slot-card">
+                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="04:00 — 08:00">
                     <div class="slot-fill bg-success-soft" style="width: 4%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">04:00 — 08:00</div>
@@ -52,7 +52,7 @@
             </div>
 
             <div class="col-2">
-                <div class="slot-card active">
+                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="08:00 — 12:00">
                     <div class="slot-fill bg-warning-soft" style="width: 64%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">08:00 — 12:00</div>
@@ -68,7 +68,7 @@
             </div>
 
             <div class="col-2">
-                <div class="slot-card">
+                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="12:00 — 16:00">
                     <div class="slot-fill bg-danger-soft" style="width: 92%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">12:00 — 16:00</div>
@@ -84,7 +84,7 @@
             </div>
 
             <div class="col-2">
-                <div class="slot-card disabled">
+                <div class="slot-card disabled" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="16:00 — 20:00">
                     <div class="slot-fill bg-dark-soft" style="width: 100%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">
@@ -103,7 +103,7 @@
             </div>
 
             <div class="col-2">
-                <div class="slot-card">
+                <div class="slot-card" data-date="2025-05-08" data-date-label="08 мая 2025" data-time="20:00 — 00:00">
                     <div class="slot-fill bg-warning-soft" style="width: 59%;"></div>
                     <div class="slot-content">
                         <div class="slot-time">20:00 — 00:00</div>
@@ -196,27 +196,17 @@
 
                 <div class="booking-slot-badge w-100">
                     <div class="booking-slot-badge__date">
-                        <i class="fas fa-calendar-alt me-2"></i>08 мая 2025
+                        <i class="fas fa-calendar-alt me-2"></i><span id="slotBadgeDate">Слот не выбран</span>
                     </div>
                     <div class="booking-slot-badge__time">
-                        <i class="fas fa-clock me-2"></i>08:00 — 12:00
+                        <i class="fas fa-clock me-2"></i><span id="slotBadgeTime">—</span>
                     </div>
                 </div>
 
                 <div class="d-flex flex-column gap-1 flex-grow-1" style="overflow-y: auto; min-height: 0;">
                     <span class="fs-7 fw-semibold">Контейнеры</span>
-
-                    <div class="booking-container-item w-100">
-                        <i class="fas fa-box me-2 text-primary"></i>
-                        <span class="fw-semibold">TLLU1234567</span>
-                    </div>
-                    <div class="booking-container-item w-100">
-                        <i class="fas fa-box me-2 text-primary"></i>
-                        <span class="fw-semibold">MSCU9876543</span>
-                    </div>
-                    <div class="booking-container-item w-100">
-                        <i class="fas fa-box me-2 text-primary"></i>
-                        <span class="fw-semibold">CMAU0011223</span>
+                    <div id="containerList">
+                        <span class="text-muted fs-8">Не выбрано</span>
                     </div>
                 </div>
 
@@ -235,38 +225,56 @@
 <script>
     const checkAll = document.getElementById("checkAll");
     const checks = document.querySelectorAll(".container-check");
-    const selectedList = document.getElementById("selectedList");
     const selectedCount = document.getElementById("selectedCount");
-    const openSlotsBtn = document.getElementById("openSlotsBtn");
+    const slotBadgeDate = document.getElementById("slotBadgeDate");
+    const slotBadgeTime = document.getElementById("slotBadgeTime");
+
+    // --- slot selection ---
+
+    document.querySelectorAll(".slot-card:not(.disabled)").forEach(card => {
+        card.addEventListener("click", () => {
+            document.querySelectorAll(".slot-card").forEach(c => c.classList.remove("active"));
+            card.classList.add("active");
+
+            slotBadgeDate.textContent = card.dataset.dateLabel;
+            slotBadgeTime.textContent = card.dataset.time;
+
+            let hiddenInput = document.getElementById("selectedSlotDate");
+            if (!hiddenInput) {
+                hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "slot_date";
+                hiddenInput.id = "selectedSlotDate";
+                document.querySelector(".card-body.d-flex.flex-column").appendChild(hiddenInput);
+            }
+            hiddenInput.value = card.dataset.date;
+        });
+    });
+
+    // --- container selection ---
 
     function updateSelected() {
         const checked = [...checks].filter(ch => ch.checked);
 
         selectedCount.textContent = `Выбрано: ${checked.length}`;
-        openSlotsBtn.disabled = checked.length === 0;
 
         document.querySelectorAll(".container-row").forEach(row => {
             const ch = row.querySelector(".container-check");
-            row.classList.toggle("table-success", ch.checked);
+            if (ch) row.classList.toggle("table-success", ch.checked);
         });
 
+        const containerList = document.getElementById("containerList");
         if (checked.length === 0) {
-            selectedList.innerHTML = `<span class="text-muted">Не выбрано</span>`;
+            containerList.innerHTML = `<span class="text-muted fs-8">Не выбрано</span>`;
             return;
         }
 
-        selectedList.innerHTML = checked.map(ch =>
-            `<div class="d-flex justify-content-between align-items-center mb-1">
-                <span>${ch.dataset.number}</span>
-                <i class="fas fa-times text-danger" style="cursor:pointer"
-                   onclick="removeContainer('${ch.value}')"></i>
-             </div>`
+        containerList.innerHTML = checked.map(ch =>
+            `<div class="booking-container-item w-100">
+                <i class="fas fa-box me-2 text-primary"></i>
+                <span class="fw-semibold">${ch.dataset.number}</span>
+            </div>`
         ).join("");
-    }
-
-    function removeContainer(number) {
-        const ch = document.querySelector(`.container-check[value="${number}"]`);
-        if (ch) { ch.checked = false; updateSelected(); }
     }
 
     checkAll.addEventListener("change", () => {
