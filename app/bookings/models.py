@@ -28,6 +28,10 @@ class Slot(models.Model):
         return round(self.current_count / self.container_limit * 100)
 
     @property
+    def is_full(self) -> bool:
+        return self.current_count >= self.container_limit
+
+    @property
     def color_class(self) -> str:
         if self.is_blocked or self.occupancy_percent >= 100:
             return "dark"
