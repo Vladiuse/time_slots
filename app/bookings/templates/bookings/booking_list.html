@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Заявки{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column gap-2 flex-grow-1 overflow-y-auto" style="min-height: 0;">
+
+    {% for booking in bookings %}
+    <div class="card shadow-sm flex-shrink-0
+        {% if booking.status == 'active' %}border-start border-success border-4
+        {% elif booking.status == 'cancelled' %}border-start border-secondary border-4
+        {% else %}border-start border-warning border-4{% endif %}">
+        <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div class="d-flex align-items-center gap-4">
+                    <span class="fs-5 fw-bold">{{ booking.container.number }}</span>
+                    <span class="text-muted fs-7">
+                        <i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}
+                    </span>
+                    <span class="text-muted fs-7">
+                        <i class="fas fa-clock me-1"></i>{{ booking.slot.time_range }}
+                    </span>
+                    <span class="badge
+                        {% if booking.status == 'active' %}bg-success
+                        {% elif booking.status == 'cancelled' %}bg-secondary
+                        {% else %}bg-warning text-dark{% endif %}">
+                        {{ booking.get_status_display }}
+                    </span>
+                </div>
+
+                {% if booking.status == 'active' %}
+                <button class="btn btn-sm btn-outline-danger"
+                        data-booking-id="{{ booking.pk }}"
+                        data-container="{{ booking.container.number }}"
+                        onclick="openDeleteModal(this)">
+                    <i class="fas fa-times me-1"></i>Отменить
+                </button>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-muted py-5">
+        <i class="fas fa-inbox fa-2x mb-2"></i>
+        <p>Заявок нет</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold">Удалить заявку</h6>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Удалить заявку на контейнер <strong id="modalContainerNumber"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-mdb-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openDeleteModal(btn) {
+        document.getElementById("modalContainerNumber").textContent = btn.dataset.container;
+        document.getElementById("deleteForm").action = `/bookings/${btn.dataset.bookingId}/delete/`;
+
+        const modal = new mdb.Modal(document.getElementById("deleteModal"));
+        modal.show();
+    }
+</script>
+{% endblock %}

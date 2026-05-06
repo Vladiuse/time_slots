@@ -32,3 +32,12 @@ class BookingListView(View):
             .order_by("-slot__date", "slot__start_time")
         )
         return render(request, "bookings/booking_list.html", {"bookings": bookings})
+
+
+class BookingDeleteView(View):
+    def post(self, request: HttpRequest, pk: int) -> HttpResponse:  # noqa: ARG002
+        booking = Booking.objects.select_related("container").get(pk=pk)
+        booking.container.status = Container.Status.ON_STATION
+        booking.container.save(update_fields=["status"])
+        booking.delete()
+        return redirect("bookings:booking_list")
