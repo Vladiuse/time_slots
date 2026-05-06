@@ -59,6 +59,11 @@ nav.navbar {
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 0.85rem;
+    width: 100%;
+}
+
+.booking-container-item .flex-grow-1 {
+    min-width: 0;
 }
 /* BOOKING FORM */
 

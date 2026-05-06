@@ -272,9 +272,17 @@
         containerList.innerHTML = checked.map(ch =>
             `<div class="booking-container-item w-100">
                 <i class="fas fa-box me-2 text-primary"></i>
-                <span class="fw-semibold">${ch.dataset.number}</span>
+                <span class="fw-semibold flex-grow-1">${ch.dataset.number}</span>
+                <i class="fas fa-times text-danger ms-2" style="cursor:pointer"
+                   onclick="removeContainer('${ch.value}')"></i>
+                <input type="hidden" name="container_numbers" value="${ch.value}">
             </div>`
         ).join("");
+    }
+
+    function removeContainer(number) {
+        const ch = document.querySelector(`.container-check[value="${number}"]`);
+        if (ch) { ch.checked = false; updateSelected(); }
     }
 
     checkAll.addEventListener("change", () => {
