@@ -1,6 +1,7 @@
+from clients.models import Client
 from containers.models import Container
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views import View
 
 from .models import Booking, Slot
@@ -20,3 +21,14 @@ class BookingCreateView(View):
         containers.update(status=Container.Status.IN_BOOKING)
 
         return redirect("containers:containers_list")
+
+
+class BookingListView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
+        bookings = (
+            Booking.objects.filter(container__client=client)
+            .select_related("slot", "container")
+            .order_by("-slot__date", "slot__start_time")
+        )
+        return render(request, "bookings/booking_list.html", {"bookings": bookings})
