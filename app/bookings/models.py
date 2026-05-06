@@ -4,18 +4,17 @@ from django.db import models
 
 class Slot(models.Model):
     date = models.DateField()
-    index = models.PositiveSmallIntegerField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     is_blocked = models.BooleanField(default=False)
     container_limit = models.PositiveIntegerField(default=50)
 
     class Meta:
-        unique_together = ("date", "index")
-        ordering = ("date", "index")
+        unique_together = ("date", "start_time")
+        ordering = ("date", "start_time")
 
     def __str__(self) -> str:
-        start_hour = self.index * 4
-        end_hour = start_hour + 4
-        return f"{self.date} {start_hour:02d}-{end_hour:02d}"
+        return f"{self.date} {self.start_time:%H:%M}—{self.end_time:%H:%M}"
 
 
 class Booking(models.Model):
