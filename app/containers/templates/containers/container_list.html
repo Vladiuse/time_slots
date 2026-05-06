@@ -210,7 +210,7 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary btn-sm w-100 flex-shrink-0" id="openSlotsBtn">
+                <button class="btn btn-primary btn-sm w-100 flex-shrink-0" id="submitBtn" disabled>
                     <i class="fas fa-calendar-check me-1"></i>Подтвердить заявку
                 </button>
 
@@ -228,6 +228,14 @@
     const selectedCount = document.getElementById("selectedCount");
     const slotBadgeDate = document.getElementById("slotBadgeDate");
     const slotBadgeTime = document.getElementById("slotBadgeTime");
+    const submitBtn = document.getElementById("submitBtn");
+    let slotSelected = false;
+
+    function updateSubmitBtn() {
+        const hasContainers = [...checks].some(ch => ch.checked);
+        console.log(hasContainers)
+        submitBtn.disabled = !(slotSelected && hasContainers);
+    }
 
     // --- slot selection ---
 
@@ -248,6 +256,8 @@
                 document.querySelector(".card-body.d-flex.flex-column").appendChild(hiddenInput);
             }
             hiddenInput.value = card.dataset.date;
+            slotSelected = true;
+            updateSubmitBtn();
         });
     });
 
@@ -278,11 +288,14 @@
                 <input type="hidden" name="container_numbers" value="${ch.value}">
             </div>`
         ).join("");
+
+        updateSubmitBtn();
     }
 
     function removeContainer(number) {
         const ch = document.querySelector(`.container-check[value="${number}"]`);
         if (ch) { ch.checked = false; updateSelected(); }
+        updateSubmitBtn();
     }
 
     checkAll.addEventListener("change", () => {
