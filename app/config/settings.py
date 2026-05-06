@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "clients.apps.ClientsConfig",
     "containers.apps.ContainersConfig",
+    "bookings.apps.BookingsConfig",
 ]
 
 MIDDLEWARE = [
