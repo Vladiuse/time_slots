@@ -7,6 +7,7 @@ from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
+from users.models import User
 
 from .models import Booking, Slot
 
@@ -29,34 +30,31 @@ class BookingCreateView(LoginRequiredMixin, View):
 
 class BookingListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
-        bookings = (
-            Booking.objects.filter(container__client=client)
-            .select_related("slot", "container", "container__client")
-            .order_by("-slot__date", "slot__start_time")
+        bookings = Booking.objects.select_related("slot", "container", "container__client").order_by(
+            "-slot__date", "slot__start_time"
         )
+        assert isinstance(request.user, User)  # noqa: S101
+        if request.user.is_client:
+            bookings = bookings.filter(container__client=request.user.client_account.client)
         return render(request, "bookings/booking_list.html", {"bookings": bookings})
 
 
 class SlotListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
+        filter_qs = Booking.objects.select_related("container")
+        assert isinstance(request.user, User)  # noqa: S101
+        if request.user.is_client:
+            filter_qs = filter_qs.filter(container__client=request.user.client_account.client)
         slots = list(
             Slot.objects.prefetch_related(
                 Prefetch(
                     "bookings",
-                    queryset=Booking.objects.filter(
-                        container__client=client,
-                    ).select_related("container"),
+                    queryset=filter_qs,
                     to_attr="client_bookings",
                 ),
-            )
-            .order_by("date", "start_time"),
+            ).order_by("date", "start_time"),
         )
-        slots_by_date = [
-            (date, list(group))
-            for date, group in groupby(slots, key=lambda slot: slot.date)
-        ]
+        slots_by_date = [(date, list(group)) for date, group in groupby(slots, key=lambda slot: slot.date)]
         return render(request, "bookings/slot_list.html", {"slots_by_date": slots_by_date})
 
 
