@@ -5,6 +5,15 @@
 {% block content %}
 
 <div class="card shadow-sm flex-grow-1 d-flex flex-column" style="min-height: 0;">
+    <div class="card-header bg-white py-2 flex-shrink-0">
+        <div class="input-group input-group-sm" style="max-width: 360px;">
+            <span class="input-group-text bg-transparent border-end-0">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" id="bookingSearch" class="form-control border-start-0"
+                   placeholder="Клиент или номер контейнера...">
+        </div>
+    </div>
     <div class="card-body p-0 flex-grow-1" style="overflow-y: auto;">
         <table class="table table-hover table-sm mb-0 fs-8 booking-table">
             <thead class="table-light sticky-top">
@@ -19,7 +28,9 @@
             </thead>
             <tbody>
                 {% for booking in bookings %}
-                <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% else %}warning{% endif %}">
+                <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% else %}warning{% endif %}"
+                    data-client="{{ booking.container.client.name|lower }}"
+                    data-container="{{ booking.container.number|lower }}">
                     <td class="text-muted">{{ booking.container.client.name }}</td>
                     <td class="fw-bold fs-7">{{ booking.container.number }}</td>
                     <td class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}</td>
@@ -77,6 +88,18 @@
 
 {% block scripts %}
 <script>
+    function filterBookings(query) {
+        const text = query.toLowerCase().trim();
+        document.querySelectorAll(".booking-row").forEach(row => {
+            const match = row.dataset.client.includes(text) || row.dataset.container.includes(text);
+            row.style.display = match ? "" : "none";
+        });
+    }
+
+    document.getElementById("bookingSearch").addEventListener("input", function () {
+        filterBookings(this.value);
+    });
+
     function openDeleteModal(btn) {
         document.getElementById("modalContainerNumber").textContent = btn.dataset.container;
         document.getElementById("deleteForm").action = `/bookings/${btn.dataset.bookingId}/delete/`;
