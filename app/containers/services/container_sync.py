@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ContainerSyncResult:
     created_ids: list[int]
     picked_up_numbers: Collection[str]
-    skipped_no_client_numbers: list[str]
+    skipped_no_client_numbers: list[str]  # must be always blank
 
 
 def sync_containers(uploading: list[UploadingContainer]) -> ContainerSyncResult:
