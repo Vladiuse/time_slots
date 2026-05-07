@@ -36,10 +36,22 @@ def update_statuses() -> None:
             Q(slot__date=today, slot__end_time__lt=now.time()),
         )
     )
+    past_bookings = list(
+        Booking.objects.filter(
+            Q(slot__date__lt=today) |
+            Q(slot__date=today, slot__end_time__lt=now.time()),
+        ).select_related("container"),
+    )
     for booking in past_bookings:
         is_completed = random.random() < PAST_COMPLETED_RATE  # noqa: S311
-        booking.status = Booking.Status.COMPLETED if is_completed else Booking.Status.CANCELLED
+        if is_completed:
+            booking.status = Booking.Status.COMPLETED
+            booking.container.status = Container.Status.PICKED_UP
+        else:
+            booking.status = Booking.Status.CANCELLED
+            booking.container.status = Container.Status.ON_STATION
     Booking.objects.bulk_update(past_bookings, ["status"])
+    Container.objects.bulk_update([b.container for b in past_bookings], ["status"])
     print(f"Updated {len(past_bookings)} past bookings")
 
     future_bookings = list(Booking.objects.filter(slot__date__gt=today, status=Booking.Status.ACTIVE))
