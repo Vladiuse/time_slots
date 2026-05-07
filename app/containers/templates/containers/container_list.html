@@ -74,6 +74,7 @@
                                 <input type="checkbox" id="checkAll" class="form-check-input" style="display: none;">
                             </th>
                             <th>#</th>
+                            <th>Клиент</th>
                             <th>Номер</th>
                             <th>Накладная</th>
                             <th>Отпр. №</th>
@@ -95,6 +96,7 @@
                                 {% endif %}
                             </td>
                             <td class="text-muted">{{ forloop.counter }}</td>
+                            <td class="text-muted">{{ container.client.name }}</td>
                             <td class="fw-semibold">{{ container.number }}</td>
                             <td>{{ container.nn|default:"—" }}</td>
                             <td>{{ container.send_number|default:"—" }}</td>
@@ -108,7 +110,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="10" class="text-center text-muted py-4">Контейнеры не найдены</td>
+                            <td colspan="11" class="text-center text-muted py-4">Контейнеры не найдены</td>
                         </tr>
                         {% endfor %}
                     </tbody>

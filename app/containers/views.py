@@ -21,7 +21,7 @@ def containers_list(request: HttpRequest) -> HttpResponse:
         .annotate(total_count=F("current_count") + F("booking_count"))
         .order_by("start_time")
     )
-    containers = Container.objects.filter(client=client)
+    containers = Container.objects.select_related("client").filter(client=client)
     content = {
         "containers": containers,
         "status_on_station": Container.Status.ON_STATION,
