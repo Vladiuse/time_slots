@@ -1,5 +1,6 @@
 from bookings.models import Booking, Slot
 from clients.models import Client
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count, F, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -8,6 +9,7 @@ from django.utils import timezone
 from .models import Container
 
 
+@login_required
 def containers_list(request: HttpRequest) -> HttpResponse:
     client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
     slots = (

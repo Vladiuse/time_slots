@@ -2,6 +2,7 @@ from itertools import groupby
 
 from clients.models import Client
 from containers.models import Container
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -10,7 +11,7 @@ from django.views import View
 from .models import Booking, Slot
 
 
-class BookingCreateView(View):
+class BookingCreateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponse:
         slot_id = request.POST["slot_id"]
         container_numbers = request.POST.getlist("container_numbers")
@@ -26,7 +27,7 @@ class BookingCreateView(View):
         return redirect("containers:containers_list")
 
 
-class BookingListView(View):
+class BookingListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
         bookings = (
@@ -37,7 +38,7 @@ class BookingListView(View):
         return render(request, "bookings/booking_list.html", {"bookings": bookings})
 
 
-class SlotListView(View):
+class SlotListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
         slots = list(
@@ -59,7 +60,7 @@ class SlotListView(View):
         return render(request, "bookings/slot_list.html", {"slots_by_date": slots_by_date})
 
 
-class BookingDeleteView(View):
+class BookingDeleteView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest, pk: int) -> HttpResponse:  # noqa: ARG002
         booking = Booking.objects.select_related("container").get(pk=pk)
         booking.container.status = Container.Status.ON_STATION

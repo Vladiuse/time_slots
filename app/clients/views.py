@@ -1,4 +1,5 @@
 from containers.models import Container
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -7,7 +8,7 @@ from django.views import View
 from .models import Client
 
 
-class ClientListView(View):
+class ClientListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         clients = Client.objects.annotate(
             containers_on_station=Count(
