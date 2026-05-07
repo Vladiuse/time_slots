@@ -5,13 +5,38 @@
 {% block content %}
 
 <div class="card shadow-sm flex-grow-1 d-flex flex-column" style="min-height: 0;">
-    <div class="card-header bg-white py-2 flex-shrink-0">
-        <div class="input-group input-group-sm" style="max-width: 360px;">
-            <span class="input-group-text bg-transparent border-end-0">
-                <i class="fas fa-search text-muted"></i>
-            </span>
-            <input type="text" id="bookingSearch" class="form-control border-start-0"
-                   placeholder="Клиент или номер контейнера...">
+    <div class="card-header bg-white flex-shrink-0 py-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+
+            <div class="input-group input-group-sm" style="max-width: 300px;">
+                <span class="input-group-text bg-light border-end-0 text-muted">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" id="bookingSearch" class="form-control border-start-0 bg-light"
+                       placeholder="Клиент или контейнер...">
+            </div>
+
+            <div class="vr"></div>
+
+            <div class="d-flex align-items-center gap-1" id="statusFilter">
+                <button class="btn btn-sm btn-primary active" data-status="all">
+                    <i class="fas fa-list me-1"></i>Все
+                </button>
+                <button class="btn btn-sm btn-outline-success" data-status="active">
+                    <i class="fas fa-check-circle me-1"></i>Активные
+                </button>
+                <button class="btn btn-sm btn-outline-warning" data-status="not_completed">
+                    <i class="fas fa-exclamation-circle me-1"></i>Не выполнены
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-status="cancelled">
+                    <i class="fas fa-ban me-1"></i>Отменены
+                </button>
+            </div>
+
+            <div class="vr"></div>
+
+            <span class="text-muted fs-8" id="rowCount"></span>
+
         </div>
     </div>
     <div class="card-body p-0 flex-grow-1" style="overflow-y: auto;">
@@ -30,7 +55,8 @@
                 {% for booking in bookings %}
                 <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% else %}warning{% endif %}"
                     data-client="{{ booking.container.client.name|lower }}"
-                    data-container="{{ booking.container.number|lower }}">
+                    data-container="{{ booking.container.number|lower }}"
+                    data-status="{{ booking.status }}">
                     <td class="text-muted">{{ booking.container.client.name }}</td>
                     <td class="fw-bold fs-7">{{ booking.container.number }}</td>
                     <td class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}</td>
@@ -88,17 +114,48 @@
 
 {% block scripts %}
 <script>
-    function filterBookings(query) {
-        const text = query.toLowerCase().trim();
+    let activeStatus = "all";
+    let searchQuery = "";
+
+    function filterBySearch(row) {
+        if (!searchQuery) return true;
+        return row.dataset.client.includes(searchQuery) || row.dataset.container.includes(searchQuery);
+    }
+
+    function filterByStatus(row) {
+        if (activeStatus === "all") return true;
+        return row.dataset.status === activeStatus;
+    }
+
+    function applyFilters() {
+        let visible = 0;
         document.querySelectorAll(".booking-row").forEach(row => {
-            const match = row.dataset.client.includes(text) || row.dataset.container.includes(text);
-            row.style.display = match ? "" : "none";
+            const show = filterBySearch(row) && filterByStatus(row);
+            row.style.display = show ? "" : "none";
+            if (show) visible++;
         });
+        document.getElementById("rowCount").textContent = `Показано: ${visible}`;
     }
 
     document.getElementById("bookingSearch").addEventListener("input", function () {
-        filterBookings(this.value);
+        searchQuery = this.value.toLowerCase().trim();
+        applyFilters();
     });
+
+    document.querySelectorAll("#statusFilter button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll("#statusFilter button").forEach(b => {
+                b.classList.remove("active", "btn-primary", "btn-success", "btn-warning", "btn-secondary");
+                b.classList.add("btn-outline-" + (b.dataset.status === "active" ? "success" : b.dataset.status === "not_completed" ? "warning" : b.dataset.status === "cancelled" ? "secondary" : "primary"));
+            });
+            btn.classList.remove("btn-outline-success", "btn-outline-warning", "btn-outline-secondary", "btn-outline-primary");
+            btn.classList.add("active", "btn-" + (btn.dataset.status === "active" ? "success" : btn.dataset.status === "not_completed" ? "warning" : btn.dataset.status === "cancelled" ? "secondary" : "primary"));
+            activeStatus = btn.dataset.status;
+            applyFilters();
+        });
+    });
+
+    applyFilters();
 
     function openDeleteModal(btn) {
         document.getElementById("modalContainerNumber").textContent = btn.dataset.container;
