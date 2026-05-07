@@ -11,7 +11,7 @@ def create_client_accounts(clients: list[Client]) -> list[ClientAccount]:
     accounts = []
     for client in clients:
         username = client_name_to_username(client.name)
-        user = User.objects.create(username=username)
+        user = User.objects.create_user(username=username, password="20003000Ab%")  # noqa: S106
         account = ClientAccount.objects.create(
             user=user,
             client=client,
