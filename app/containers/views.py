@@ -23,7 +23,7 @@ def containers_list(request: HttpRequest) -> HttpResponse:
         .annotate(total_count=F("current_count") + F("booking_count"))
         .order_by("start_time")
     )
-    containers = Container.objects.select_related("client")
+    containers = Container.objects.select_related("client").order_by("client__name", "number")
     assert isinstance(request.user, User) # noqa: S101
     if request.user.is_client:
         containers = containers.filter(client=request.user.client_account.client)
