@@ -28,6 +28,9 @@
                 <button class="btn btn-sm btn-outline-warning" data-status="not_completed">
                     <i class="fas fa-exclamation-circle me-1"></i>Не выполнены
                 </button>
+                <button class="btn btn-sm btn-outline-primary" data-status="completed">
+                    <i class="fas fa-check-double me-1"></i>Выполнены
+                </button>
                 <button class="btn btn-sm btn-outline-secondary" data-status="cancelled">
                     <i class="fas fa-ban me-1"></i>Отменены
                 </button>
@@ -53,7 +56,7 @@
             </thead>
             <tbody>
                 {% for booking in bookings %}
-                <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% else %}warning{% endif %}"
+                <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% elif booking.status == 'completed' %}primary{% else %}warning{% endif %}"
                     data-client="{{ booking.container.client.name|lower }}"
                     data-container="{{ booking.container.number|lower }}"
                     data-status="{{ booking.status }}">
@@ -62,7 +65,7 @@
                     <td class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}</td>
                     <td class="text-muted"><i class="fas fa-clock me-1"></i>{{ booking.slot.time_range }}</td>
                     <td>
-                        <span class="badge fs-7 {% if booking.status == 'active' %}bg-success{% elif booking.status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                        <span class="badge fs-7 {% if booking.status == 'active' %}bg-success{% elif booking.status == 'cancelled' %}bg-secondary{% elif booking.status == 'completed' %}bg-primary{% else %}bg-warning text-dark{% endif %}">
                             {{ booking.get_status_display }}
                         </span>
                     </td>

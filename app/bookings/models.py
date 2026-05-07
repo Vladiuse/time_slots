@@ -49,6 +49,7 @@ class Booking(models.Model):
         ACTIVE = "active", "Активна"
         CANCELLED = "cancelled", "Отменена"
         NOT_COMPLETED = "not_completed", "Не выполнена"
+        COMPLETED = "completed", "Выполнена"
 
     slot = models.ForeignKey(Slot, on_delete=models.PROTECT, related_name="bookings")
     container = models.ForeignKey(Container, on_delete=models.PROTECT, related_name="bookings")
