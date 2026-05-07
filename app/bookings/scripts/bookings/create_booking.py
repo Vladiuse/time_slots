@@ -2,10 +2,10 @@ import json
 import random
 
 from containers.models import Container
-
-from bookings.models import Booking, Slot
 from django.db.models import Q
 from django.utils import timezone
+
+from bookings.models import Booking, Slot
 
 PAST_COMPLETED_RATE = 0.9
 FUTURE_CANCELLED_RATE = 0.2

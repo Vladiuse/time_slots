@@ -11,3 +11,4 @@ def run() -> None:
     ClientAccount.objects.all().delete()
     Client.objects.all().delete()
     User.objects.exclude(username__in=["vlad", "admin"]).delete()
+    print("Delete all")
