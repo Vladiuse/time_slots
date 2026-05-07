@@ -46,7 +46,7 @@
         <table class="table table-hover table-sm mb-0 fs-8 booking-table">
             <thead class="table-light sticky-top">
                 <tr>
-                    <th>Клиент</th>
+                    {% if not user.is_client %}<th>Клиент</th>{% endif %}
                     <th>Контейнер</th>
                     <th>Дата</th>
                     <th>Время</th>
@@ -60,7 +60,7 @@
                     data-client="{{ booking.container.client.name|lower }}"
                     data-container="{{ booking.container.number|lower }}"
                     data-status="{{ booking.status }}">
-                    <td class="text-muted">{{ booking.container.client.name }}</td>
+                    {% if not user.is_client %}<td class="text-muted">{{ booking.container.client.name }}</td>{% endif %}
                     <td class="fw-bold fs-7">{{ booking.container.number }}</td>
                     <td class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}</td>
                     <td class="text-muted"><i class="fas fa-clock me-1"></i>{{ booking.slot.time_range }}</td>
