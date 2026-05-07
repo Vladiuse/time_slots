@@ -1,5 +1,8 @@
+from itertools import groupby
+
 from clients.models import Client
 from containers.models import Container
+from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
@@ -9,7 +12,7 @@ from .models import Booking, Slot
 
 class BookingCreateView(View):
     def post(self, request: HttpRequest) -> HttpResponse:
-        slot_id = request.POST.get("slot_id")
+        slot_id = request.POST["slot_id"]
         container_numbers = request.POST.getlist("container_numbers")
 
         slot = Slot.objects.get(pk=slot_id)
@@ -32,6 +35,28 @@ class BookingListView(View):
             .order_by("-slot__date", "slot__start_time")
         )
         return render(request, "bookings/booking_list.html", {"bookings": bookings})
+
+
+class SlotListView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
+        slots = list(
+            Slot.objects.prefetch_related(
+                Prefetch(
+                    "bookings",
+                    queryset=Booking.objects.filter(
+                        container__client=client,
+                    ).select_related("container"),
+                    to_attr="client_bookings",
+                ),
+            )
+            .order_by("date", "start_time"),
+        )
+        slots_by_date = [
+            (date, list(group))
+            for date, group in groupby(slots, key=lambda slot: slot.date)
+        ]
+        return render(request, "bookings/slot_list.html", {"slots_by_date": slots_by_date})
 
 
 class BookingDeleteView(View):
