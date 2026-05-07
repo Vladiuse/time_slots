@@ -31,7 +31,7 @@ class BookingListView(View):
         client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
         bookings = (
             Booking.objects.filter(container__client=client)
-            .select_related("slot", "container")
+            .select_related("slot", "container", "container__client")
             .order_by("-slot__date", "slot__start_time")
         )
         return render(request, "bookings/booking_list.html", {"bookings": bookings})
