@@ -34,7 +34,7 @@ def update_statuses() -> None:
         Booking.objects.filter(status=Booking.Status.ACTIVE).filter(
             Q(slot__date__lt=today) |
             Q(slot__date=today, slot__end_time__lt=now.time()),
-        )
+        ),
     )
     past_bookings = list(
         Booking.objects.filter(

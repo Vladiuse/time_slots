@@ -79,7 +79,7 @@
                                 <input type="checkbox" id="checkAll" class="form-check-input" style="display: none;">
                             </th>
                             <th>#</th>
-                            <th>Клиент</th>
+                            {% if not user.is_client %}<th>Клиент</th>{% endif %}
                             <th>Номер</th>
                             <th>Накладная</th>
                             <th>Отпр. №</th>
@@ -101,7 +101,7 @@
                                 {% endif %}
                             </td>
                             <td class="text-muted">{{ forloop.counter }}</td>
-                            <td class="text-muted">{{ container.client.name }}</td>
+                            {% if not user.is_client %}<td class="text-muted">{{ container.client.name }}</td>{% endif %}
                             <td class="fw-semibold">{{ container.number }}</td>
                             <td>{{ container.nn|default:"—" }}</td>
                             <td>{{ container.send_number|default:"—" }}</td>
