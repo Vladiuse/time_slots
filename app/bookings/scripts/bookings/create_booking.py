@@ -4,6 +4,7 @@ import random
 from containers.models import Container
 
 from bookings.models import Booking, Slot
+from django.db.models import Q
 from django.utils import timezone
 
 PAST_COMPLETED_RATE = 0.9
@@ -28,7 +29,13 @@ def create_slots(containers: list[Container]) -> None:
 def update_statuses() -> None:
     today = timezone.localdate()
 
-    past_bookings = list(Booking.objects.filter(slot__date__lt=today, status=Booking.Status.ACTIVE))
+    now = timezone.localtime()
+    past_bookings = list(
+        Booking.objects.filter(status=Booking.Status.ACTIVE).filter(
+            Q(slot__date__lt=today) |
+            Q(slot__date=today, slot__end_time__lt=now.time()),
+        )
+    )
     for booking in past_bookings:
         is_completed = random.random() < PAST_COMPLETED_RATE  # noqa: S311
         booking.status = Booking.Status.COMPLETED if is_completed else Booking.Status.CANCELLED
