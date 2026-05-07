@@ -52,19 +52,24 @@
 
     <div class="col-9 h-100">
         <div class="card shadow-sm h-100 d-flex flex-column">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 flex-shrink-0">
-                <h6 class="mb-0 fw-bold">
+            <div class="card-header bg-white d-flex align-items-center gap-3 py-3 flex-shrink-0">
+                <h6 class="mb-0 fw-bold flex-shrink-0">
                     <i class="fas fa-box me-2 text-primary"></i>Контейнеры на станции
                 </h6>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="btn-group btn-group-sm" role="group" id="statusFilter">
-                        <button type="button" class="btn btn-outline-secondary active" data-status="all">Все</button>
-                        <button type="button" class="btn btn-outline-secondary" data-status="on_station">На станции</button>
-                        <button type="button" class="btn btn-outline-secondary" data-status="in_booking">В заявке</button>
-                        <button type="button" class="btn btn-outline-secondary" data-status="picked_up">Забран</button>
-                    </div>
-                    <span class="badge bg-primary rounded-pill" id="selectedCount">Выбрано: 0</span>
+                <div class="input-group input-group-sm" style="max-width: 100%;">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" id="containerSearch" class="form-control border-start-0 bg-light"
+                           placeholder="Клиент или контейнер...">
                 </div>
+                <div class="btn-group btn-group-sm flex-shrink-0" role="group" id="statusFilter">
+                    <button type="button" class="btn btn-outline-secondary active" data-status="all">Все</button>
+                    <button type="button" class="btn btn-outline-secondary" data-status="on_station">На станции</button>
+                    <button type="button" class="btn btn-outline-secondary" data-status="in_booking">В заявке</button>
+                    <button type="button" class="btn btn-outline-secondary" data-status="picked_up">Забран</button>
+                </div>
+                <span class="badge bg-primary rounded-pill ms-auto" id="selectedCount">Выбрано: 0</span>
             </div>
             <div class="card-body p-0 flex-grow-1" style="overflow-y: auto; min-height: 0;">
                 <table class="table table-hover table-sm mb-0 fs-8">
@@ -87,7 +92,7 @@
                     </thead>
                     <tbody id="containerTable">
                         {% for container in containers %}
-                        <tr class="container-row" data-number="{{ container.number }}" data-status="{{ container.status }}">
+                        <tr class="container-row" data-number="{{ container.number|lower }}" data-client="{{ container.client.name|lower }}" data-status="{{ container.status }}">
                             <td>
                                 {% if container.status == status_on_station %}
                                 <input type="checkbox" class="form-check-input container-check"
@@ -233,20 +238,31 @@
 
     checks.forEach(ch => ch.addEventListener("change", updateSelected));
 
+    // --- search filter ---
+
+    let searchQuery = "";
+
+    function filterContainers() {
+        document.querySelectorAll(".container-row").forEach(row => {
+            const matchSearch = !searchQuery || row.dataset.client.includes(searchQuery) || row.dataset.number.includes(searchQuery);
+            const activeStatus = document.querySelector("#statusFilter button.active")?.dataset.status ?? "all";
+            const matchStatus = activeStatus === "all" || row.dataset.status === activeStatus;
+            row.style.display = matchSearch && matchStatus ? "" : "none";
+        });
+    }
+
+    document.getElementById("containerSearch").addEventListener("input", function () {
+        searchQuery = this.value.toLowerCase().trim();
+        filterContainers();
+    });
+
     // --- status filter ---
 
     document.querySelectorAll("#statusFilter button").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll("#statusFilter button").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            const status = btn.dataset.status;
-            document.querySelectorAll(".container-row").forEach(row => {
-                if (status === "all" || row.dataset.status === status) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
+            filterContainers();
         });
     });
 </script>

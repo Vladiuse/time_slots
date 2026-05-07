@@ -5,13 +5,13 @@ from django.db.models import Count, F, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
+from users.models import User
 
 from .models import Container
 
 
 @login_required
 def containers_list(request: HttpRequest) -> HttpResponse:
-    client = Client.objects.get(source_name='ООО "КРАФТТРАНС"')
     slots = (
         Slot.objects.filter(date=timezone.localdate())
         .annotate(
@@ -23,7 +23,10 @@ def containers_list(request: HttpRequest) -> HttpResponse:
         .annotate(total_count=F("current_count") + F("booking_count"))
         .order_by("start_time")
     )
-    containers = Container.objects.select_related("client").filter(client=client)
+    containers = Container.objects.select_related("client")
+    assert isinstance(request.user, User) # noqa: S101
+    if request.user.is_client:
+        containers = containers.filter(client=request.user.client_account.client)
     content = {
         "containers": containers,
         "status_on_station": Container.Status.ON_STATION,
