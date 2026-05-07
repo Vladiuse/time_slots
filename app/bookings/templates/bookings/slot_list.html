@@ -37,6 +37,8 @@
                             <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#eaf6ee; border-left: 3px solid #3bbf6b;">
                             {% elif booking.status == 'cancelled' %}
                             <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#f0f0f0; border-left: 3px solid #aaa;">
+                            {% elif booking.status == 'completed' %}
+                            <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#e8f0fe; border-left: 3px solid #1976d2;">
                             {% else %}
                             <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#fff8e1; border-left: 3px solid #ffc107;">
                             {% endif %}
@@ -52,8 +54,7 @@
                                     Отменить <i class="fas fa-times"></i>
                                 </button>
                                 {% else %}
-                                <span class="badge fs-8
-                                    {% if booking.status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                                <span class="badge fs-8 {% if booking.status == 'cancelled' %}bg-secondary{% elif booking.status == 'completed' %}bg-primary{% else %}bg-warning text-dark{% endif %}">
                                     {{ booking.get_status_display }}
                                 </span>
                                 {% endif %}
