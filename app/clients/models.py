@@ -6,6 +6,10 @@ class Client(models.Model):
     name = models.CharField(max_length=255, unique=True)
     source_name = models.CharField(max_length=255, unique=True)
     is_blocked = models.BooleanField(default=False)
+    contact_full_name = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=512, blank=True)
+    phone = models.CharField(max_length=32, blank=True)
+    email = models.EmailField(blank=True)
 
     def __str__(self) -> str:
         return self.name
