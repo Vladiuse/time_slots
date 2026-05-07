@@ -73,6 +73,16 @@ nav.navbar {
 }
 /* BOOKING FORM */
 
+/* BOOKING TABLE */
+.booking-table tbody tr.booking-row td:first-child {
+    border-left: 4px solid transparent;
+    padding-left: 12px;
+}
+.booking-row--success td:first-child  { border-left-color: rgba(var(--mdb-success-rgb), 1); }
+.booking-row--secondary td:first-child { border-left-color: rgba(var(--mdb-secondary-rgb), 1); }
+.booking-row--warning td:first-child   { border-left-color: rgba(var(--mdb-warning-rgb), 1); }
+/* BOOKING TABLE */
+
 /* SLOTS */
 .slot-card {
     position: relative;

@@ -4,52 +4,52 @@
 
 {% block content %}
 
-<div class="d-flex flex-column gap-2 flex-grow-1 overflow-y-auto" style="min-height: 0;">
-
-    {% for booking in bookings %}
-    <div class="card shadow-sm flex-shrink-0
-        {% if booking.status == 'active' %}border-start border-success border-4
-        {% elif booking.status == 'cancelled' %}border-start border-secondary border-4
-        {% else %}border-start border-warning border-4{% endif %}">
-        <div class="card-body py-2">
-            <div class="d-flex justify-content-between align-items-center">
-
-                <div class="d-flex align-items-center gap-4">
-                    <span class="text-muted fs-7">{{ booking.container.client.name }}</span>
-                    <span class="fs-5 fw-bold">{{ booking.container.number }}</span>
-                    <span class="text-muted fs-7">
-                        <i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}
-                    </span>
-                    <span class="text-muted fs-7">
-                        <i class="fas fa-clock me-1"></i>{{ booking.slot.time_range }}
-                    </span>
-                    <span class="badge
-                        {% if booking.status == 'active' %}bg-success
-                        {% elif booking.status == 'cancelled' %}bg-secondary
-                        {% else %}bg-warning text-dark{% endif %}">
-                        {{ booking.get_status_display }}
-                    </span>
-                </div>
-
-                {% if booking.status == 'active' %}
-                <button class="btn btn-sm btn-outline-danger"
-                        data-booking-id="{{ booking.pk }}"
-                        data-container="{{ booking.container.number }}"
-                        onclick="openDeleteModal(this)">
-                    <i class="fas fa-times me-1"></i>Отменить
-                </button>
-                {% endif %}
-
-            </div>
-        </div>
+<div class="card shadow-sm flex-grow-1 d-flex flex-column" style="min-height: 0;">
+    <div class="card-body p-0 flex-grow-1" style="overflow-y: auto;">
+        <table class="table table-hover table-sm mb-0 fs-8 booking-table">
+            <thead class="table-light sticky-top">
+                <tr>
+                    <th>Клиент</th>
+                    <th>Контейнер</th>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr class="booking-row booking-row--{% if booking.status == 'active' %}success{% elif booking.status == 'cancelled' %}secondary{% else %}warning{% endif %}">
+                    <td class="text-muted">{{ booking.container.client.name }}</td>
+                    <td class="fw-bold fs-7">{{ booking.container.number }}</td>
+                    <td class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ booking.slot.date|date:"d.m.Y" }}</td>
+                    <td class="text-muted"><i class="fas fa-clock me-1"></i>{{ booking.slot.time_range }}</td>
+                    <td>
+                        <span class="badge fs-7 {% if booking.status == 'active' %}bg-success{% elif booking.status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        {% if booking.status == 'active' %}
+                        <button class="btn btn-sm btn-outline-danger"
+                                data-booking-id="{{ booking.pk }}"
+                                data-container="{{ booking.container.number }}"
+                                onclick="openDeleteModal(this)">
+                            <i class="fas fa-times me-1"></i>Отменить
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-2x mb-2 d-block"></i>Заявок нет
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    {% empty %}
-    <div class="text-center text-muted py-5">
-        <i class="fas fa-inbox fa-2x mb-2"></i>
-        <p>Заявок нет</p>
-    </div>
-    {% endfor %}
-
 </div>
 
 <div class="modal fade" id="deleteModal" tabindex="-1">
