@@ -20,7 +20,7 @@
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
                 <i class="fas fa-train fs-2"></i>
                 <div class="d-flex flex-column">
-                    <span class="fs-6">БЕЛИНТЕРТРАНС</span><br>
+                    <span class="fs-6">БЕЛИНТЕРТРАНС</span>
                     <span class="fs-8">Станция Колядичи</span>
                 </div>
             </a>
@@ -49,35 +49,52 @@
                 </ul>
 
                 <ul class="navbar-nav ms-auto d-flex align-items-center gap-2">
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <span class="badge bg-success">
                             <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>Онлайн
                         </span>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-mdb-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-mdb-toggle="dropdown" data-mdb-dropdown-init>
                             <i class="fas fa-user-circle fa-lg"></i>
-                            <span>Иванов И.И.</span>
+                            <span>{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <span class="dropdown-item-text text-muted small">ООО Ромашка</span>
+                                <span class="dropdown-item-text text-muted small">
+                                    <i class="fas fa-id-badge me-1"></i>{{ user.get_full_name|default:user.username }}
+                                </span>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>Профиль
+                                <a class="dropdown-item" href="{% url 'containers:containers_list' %}">
+                                    <i class="fas fa-box me-2"></i>Контейнеры
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item text-danger" href="#">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Выйти
+                                <a class="dropdown-item" href="{% url 'bookings:booking_list' %}">
+                                    <i class="fas fa-calendar-check me-2"></i>Мои заявки
                                 </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Выйти
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-light btn-sm" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Войти
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
 
