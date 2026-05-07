@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from faker import Faker
 from users.models import User
 
@@ -6,19 +7,26 @@ from clients.utils import client_name_to_username
 
 fake = Faker("ru_RU")
 
+DEFAULT_PASSWORD = "20003000Ab%"  # noqa: S105
+
 
 def create_client_accounts(clients: list[Client]) -> list[ClientAccount]:
-    accounts = []
-    for client in clients:
-        username = client_name_to_username(client.name)
-        user = User.objects.create_user(username=username, password="20003000Ab%")  # noqa: S106
-        account = ClientAccount.objects.create(
+    password_hash = make_password(DEFAULT_PASSWORD)
+    users = [
+        User(username=client_name_to_username(client.name), password=password_hash)
+        for client in clients
+    ]
+    created_users = User.objects.bulk_create(users)
+
+    accounts = [
+        ClientAccount(
             user=user,
             client=client,
             role=ClientAccount.Role.MASTER,
         )
-        accounts.append(account)
-    return accounts
+        for user, client in zip(created_users, clients, strict=True)
+    ]
+    return ClientAccount.objects.bulk_create(accounts)
 
 
 def sync_clients(source_names: list[str]) -> list[Client]:

@@ -14,6 +14,7 @@ class SyncResult:
 
 
 def sync_from_text(text: str) -> SyncResult:
+    print("Чтение данных контейнеров из текста...")
     uploading = UploadBookReader().read(text=text)
 
     source_names = list({container.client_name for container in uploading})
