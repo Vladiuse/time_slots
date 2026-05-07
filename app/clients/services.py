@@ -1,8 +1,24 @@
 from faker import Faker
+from users.models import User
 
-from clients.models import Client
+from clients.models import Client, ClientAccount
+from clients.utils import client_name_to_username
 
 fake = Faker("ru_RU")
+
+
+def create_client_accounts(clients: list[Client]) -> list[ClientAccount]:
+    accounts = []
+    for client in clients:
+        username = client_name_to_username(client.name)
+        user = User.objects.create(username=username)
+        account = ClientAccount.objects.create(
+            user=user,
+            client=client,
+            role=ClientAccount.Role.MASTER,
+        )
+        accounts.append(account)
+    return accounts
 
 
 def sync_clients(source_names: list[str]) -> list[Client]:
