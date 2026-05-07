@@ -23,9 +23,18 @@
                         </div>
                         <div class="d-flex flex-column gap-1">
                             {% for booking in slot.client_bookings %}
-                            <div class="rounded p-1 fs-8" style="background:#eaf6ee; border-left: 3px solid #3bbf6b;">
-                                <div class="fw-semibold">{{ booking.container.number }}</div>
-                                <div class="text-muted" style="font-size: 0.7rem;">ID: {{ booking.pk }}</div>
+                            <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#eaf6ee; border-left: 3px solid #3bbf6b;">
+                                <div>
+                                    <div class="fw-semibold">{{ booking.container.number }}</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">ID: {{ booking.pk }}</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger py-0 px-1 fs-8"
+                                        data-booking-id="{{ booking.pk }}"
+                                        data-container="{{ booking.container.number }}"
+                                        onclick="openDeleteModal(this)">
+                                        Отменить
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                             {% empty %}
                             <div class="text-muted fs-8">Нет заявок</div>
@@ -46,4 +55,37 @@
 
 </div>
 
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold">Удалить заявку</h6>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Удалить заявку на контейнер <strong id="modalContainerNumber"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-mdb-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openDeleteModal(btn) {
+        document.getElementById("modalContainerNumber").textContent = btn.dataset.container;
+        document.getElementById("deleteForm").action = `/bookings/${btn.dataset.bookingId}/delete/`;
+
+        const modal = new mdb.Modal(document.getElementById("deleteModal"));
+        modal.show();
+    }
+</script>
 {% endblock %}
