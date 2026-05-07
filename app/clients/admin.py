@@ -21,3 +21,4 @@ class ClientAccountAdmin(admin.ModelAdmin):
     list_display = ("user", "client", "role")
     search_fields = ("user__username", "client__name")
     list_filter = ("role",)
+    autocomplete_fields = ("client",)
