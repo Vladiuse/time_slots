@@ -17,6 +17,7 @@
                 <tr>
                     <th>#</th>
                     <th>Наименование</th>
+                    <th>Логин</th>
                     <th>Контактное лицо</th>
                     <th>Телефон</th>
                     <th>Email</th>
@@ -31,6 +32,7 @@
                 <tr>
                     <td class="text-muted">{{ forloop.counter }}</td>
                     <td class="fw-semibold">{{ client.name }}</td>
+                    <td><code>{{ client.master_username|default:"—" }}</code></td>
                     <td>{{ client.contact_full_name|default:"—" }}</td>
                     <td>{{ client.phone|default:"—" }}</td>
                     <td>{{ client.email|default:"—" }}</td>
@@ -61,7 +63,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="9" class="text-center text-muted py-4">Клиенты не найдены</td>
+                    <td colspan="10" class="text-center text-muted py-4">Клиенты не найдены</td>
                 </tr>
                 {% endfor %}
             </tbody>
