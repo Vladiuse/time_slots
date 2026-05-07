@@ -1,3 +1,5 @@
+from enum import unique
+
 from containers.models import Container
 from django.db import models
 
@@ -52,6 +54,9 @@ class Booking(models.Model):
     container = models.ForeignKey(Container, on_delete=models.PROTECT, related_name="bookings")
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("slot", "container")
 
     def __str__(self) -> str:
         return f"{self.container.number} → {self.slot} ({self.status})"
