@@ -23,18 +23,30 @@
                         </div>
                         <div class="d-flex flex-column gap-1">
                             {% for booking in slot.client_bookings %}
+                            {% if booking.status == 'active' %}
                             <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#eaf6ee; border-left: 3px solid #3bbf6b;">
+                            {% elif booking.status == 'cancelled' %}
+                            <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#f0f0f0; border-left: 3px solid #aaa;">
+                            {% else %}
+                            <div class="rounded p-1 fs-8 d-flex justify-content-between align-items-center" style="background:#fff8e1; border-left: 3px solid #ffc107;">
+                            {% endif %}
                                 <div>
                                     <div class="fw-semibold">{{ booking.container.number }}</div>
                                     <div class="text-muted" style="font-size: 0.7rem;">ID: {{ booking.pk }}</div>
                                 </div>
+                                {% if booking.status == 'active' %}
                                 <button class="btn btn-sm btn-outline-danger py-0 px-1 fs-8"
                                         data-booking-id="{{ booking.pk }}"
                                         data-container="{{ booking.container.number }}"
                                         onclick="openDeleteModal(this)">
-                                        Отменить
-                                    <i class="fas fa-times"></i>
+                                    Отменить <i class="fas fa-times"></i>
                                 </button>
+                                {% else %}
+                                <span class="badge fs-8
+                                    {% if booking.status == 'cancelled' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                                {% endif %}
                             </div>
                             {% empty %}
                             <div class="text-muted fs-8">Нет заявок</div>
