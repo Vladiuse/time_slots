@@ -89,12 +89,9 @@
                             <th>#</th>
                             {% if not user.is_client %}<th>Клиент</th>{% endif %}
                             <th>Номер</th>
-                            <th>Накладная</th>
                             <th>Отпр. №</th>
-                            <th>Масса</th>
                             <th>Уч.</th>
-                            <th>Прибытие</th>
-                            <th>Убытие</th>
+                            <th>Дата выгрузки</th>
                             <th>Статус</th>
                         </tr>
                     </thead>
@@ -111,19 +108,16 @@
                             <td class="text-muted">{{ forloop.counter }}</td>
                             {% if not user.is_client %}<td class="text-muted">{{ container.client.name }}</td>{% endif %}
                             <td class="fw-semibold">{{ container.number }}</td>
-                            <td>{{ container.nn|default:"—" }}</td>
                             <td>{{ container.send_number|default:"—" }}</td>
-                            <td>{{ container.weight|default:"—" }}</td>
                             <td>{{ container.area|default:"—" }}</td>
                             <td>{{ container.start_date|date:"d.m.Y"|default:"—" }}</td>
-                            <td>{{ container.end_date|date:"d.m.Y"|default:"—" }}</td>
                             <td>
                                 <span class="badge fs-8 status-{{ container.status }}">{{ container.get_status_display }}</span>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-4">Контейнеры не найдены</td>
+                            <td colspan="8" class="text-center text-muted py-4">Контейнеры не найдены</td>
                         </tr>
                         {% endfor %}
                     </tbody>
