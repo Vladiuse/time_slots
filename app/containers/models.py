@@ -5,9 +5,9 @@ from django.db import models
 
 class Container(models.Model):
     class Status(models.TextChoices):
-        ON_STATION = "on_station", "На станции"
-        IN_BOOKING = "in_booking", "В заявке"
-        PICKED_UP = "picked_up", "Забран"
+        ON_STATION = "on_station", "Не заявлен"
+        IN_BOOKING = "in_booking", "Заявлен"
+        PICKED_UP = "picked_up", "Убыл"
 
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="containers")
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ON_STATION)

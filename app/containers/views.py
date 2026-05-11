@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from bookings.models import Booking, Slot
 from clients.models import Client
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,8 @@ from django.utils import timezone
 from users.models import User
 
 from .models import Container
+
+WEEKDAY_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
 
 @login_required
@@ -27,10 +31,21 @@ def containers_list(request: HttpRequest) -> HttpResponse:
     assert isinstance(request.user, User) # noqa: S101
     if request.user.is_client:
         containers = containers.filter(client=request.user.client_account.client)
+    today = timezone.localdate()
+    date_pills = [
+        {
+            "date": today + timedelta(days=offset),
+            "weekday": WEEKDAY_SHORT[(today + timedelta(days=offset)).weekday()],
+            "is_today": offset == 0,
+            "is_active": offset == 0,
+        }
+        for offset in range(-3, 4)
+    ]
     content = {
         "containers": containers,
         "status_on_station": Container.Status.ON_STATION,
-        "today": timezone.localdate(),
+        "today": today,
         "slots": slots,
+        "date_pills": date_pills,
     }
     return render(request, "containers/container_list.html", content)

@@ -73,6 +73,42 @@ nav.navbar {
 }
 /* BOOKING FORM */
 
+/* DATE PILLS */
+.date-pills { display: flex; gap: 6px; align-items: center; }
+.date-pills .nav-arrow {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    color: #495057;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.date-pills .nav-arrow:hover { background: #f8f9fa; border-color: #1976d2; color: #1976d2; }
+.date-pill {
+    min-width: 56px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.1;
+}
+.date-pill:hover { border-color: #1976d2; }
+.date-pill.active {
+    background: #1976d2;
+    border-color: #1976d2;
+    color: #fff;
+}
+.date-pill .day { font-size: 1.1rem; font-weight: 700; }
+.date-pill .weekday { font-size: 0.65rem; opacity: 0.7; text-transform: uppercase; }
+.date-pill.today .day { color: #ff9800; }
+.date-pill.active.today .day { color: #ffd180; }
+/* DATE PILLS */
+
 /* SLOT OCCUPANCY BADGE */
 .slot-occupancy-badge {
     position: relative;
