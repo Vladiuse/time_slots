@@ -3,7 +3,7 @@ from itertools import groupby
 from clients.models import Client
 from containers.models import Container
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
+from django.db.models import Count, Prefetch, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
@@ -52,7 +52,14 @@ class SlotListView(LoginRequiredMixin, View):
                     queryset=filter_qs,
                     to_attr="client_bookings",
                 ),
-            ).order_by("date", "start_time"),
+            )
+            .annotate(
+                booking_count=Count(
+                    "bookings",
+                    filter=~Q(bookings__status=Booking.Status.CANCELLED),
+                ),
+            )
+            .order_by("date", "start_time"),
         )
         slots_by_date = [(date, list(group)) for date, group in groupby(slots, key=lambda slot: slot.date)]
         return render(request, "bookings/slot_list.html", {"slots_by_date": slots_by_date})

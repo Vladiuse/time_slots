@@ -9,7 +9,6 @@ class Slot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     is_blocked = models.BooleanField(default=False)
-    current_count = models.PositiveIntegerField(default=0)
     container_limit = models.PositiveIntegerField(default=50)
 
     class Meta:
@@ -27,11 +26,11 @@ class Slot(models.Model):
     def occupancy_percent(self) -> int:
         if self.container_limit == 0:
             return 0
-        return round(self.current_count / self.container_limit * 100)
+        return round(self.booking_count / self.container_limit * 100)
 
     @property
     def is_full(self) -> bool:
-        return self.current_count >= self.container_limit
+        return self.booking_count >= self.container_limit
 
     @property
     def color_class(self) -> str:

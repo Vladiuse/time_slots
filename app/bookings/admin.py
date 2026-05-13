@@ -5,7 +5,7 @@ from bookings.models import Booking, Slot
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
-    list_display = ("date", "start_time", "end_time", "current_count", "container_limit", "is_blocked")
+    list_display = ("date", "start_time", "end_time", "container_limit", "is_blocked")
     list_filter = ("is_blocked", "date")
     search_fields = ("date",)
     ordering = ("-date", "start_time")

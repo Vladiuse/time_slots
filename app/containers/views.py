@@ -3,7 +3,7 @@ from datetime import timedelta
 from bookings.models import Booking, Slot
 from clients.models import Client
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, F, Q
+from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -24,7 +24,6 @@ def containers_list(request: HttpRequest) -> HttpResponse:
                 filter=~Q(bookings__status=Booking.Status.CANCELLED),
             ),
         )
-        .annotate(total_count=F("current_count") + F("booking_count"))
         .order_by("start_time")
     )
     containers = Container.objects.select_related("client").order_by("client__name", "number")
