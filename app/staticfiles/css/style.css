@@ -142,6 +142,7 @@ nav.navbar {
     border-radius: 2px;
     background: rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    margin: 0 -10px;
 }
 
 .slot-occupancy-badge__bar > div {
