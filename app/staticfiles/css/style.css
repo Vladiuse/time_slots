@@ -240,6 +240,7 @@ nav.navbar {
     border-radius: 2px;
     background: rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    margin: 0 -14px;
 }
 
 .slot-progress > div {
