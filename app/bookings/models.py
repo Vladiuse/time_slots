@@ -1,7 +1,6 @@
-from enum import unique
-
 from containers.models import Container
 from django.db import models
+from django.utils import timezone
 
 
 class Slot(models.Model):
@@ -10,6 +9,8 @@ class Slot(models.Model):
     end_time = models.TimeField()
     is_blocked = models.BooleanField(default=False)
     container_limit = models.PositiveIntegerField(default=50)
+
+    booking_count: int
 
     class Meta:
         unique_together = ("date", "start_time")
@@ -31,6 +32,17 @@ class Slot(models.Model):
     @property
     def is_full(self) -> bool:
         return self.booking_count >= self.container_limit
+
+    @property
+    def is_bookable(self) -> bool:
+        if self.is_blocked or self.is_full:
+            return False
+        now = timezone.localtime()
+        if self.date > now.date():
+            return True
+        if self.date < now.date():
+            return False
+        return self.end_time > now.time()
 
     @property
     def color_class(self) -> str:
