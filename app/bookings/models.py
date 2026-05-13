@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from containers.models import Container
 from django.db import models
 from django.utils import timezone
@@ -9,8 +11,8 @@ class Slot(models.Model):
     end_time = models.TimeField()
     is_blocked = models.BooleanField(default=False)
     container_limit = models.PositiveIntegerField(default=50)
-
-    booking_count: int
+    if TYPE_CHECKING:
+        booking_count: int
 
     class Meta:
         unique_together = ("date", "start_time")

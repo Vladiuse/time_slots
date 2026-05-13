@@ -44,7 +44,7 @@ def containers_list(request: HttpRequest) -> HttpResponse:
             "is_today": offset == 0,
             "is_active": offset == 0,
         }
-        for offset in range(-3, 4)
+        for offset in range(7)
     ]
     content = {
         "containers": containers,
