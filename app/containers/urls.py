@@ -6,4 +6,5 @@ app_name = "containers"
 
 urlpatterns = [
     path("", views.containers_list, name="containers_list"),
+    path("journal/", views.containers_journal, name="journal"),
 ]

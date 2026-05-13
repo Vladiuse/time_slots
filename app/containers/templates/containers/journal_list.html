@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Журнал отгрузок{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm flex-grow-1 d-flex flex-column" style="min-height: 0;">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 flex-shrink-0">
+        <h6 class="mb-0 fw-bold">
+            <i class="fas fa-truck me-2 text-primary"></i>Журнал отгрузок
+        </h6>
+        <span class="badge bg-primary rounded-pill">{{ containers|length }}</span>
+    </div>
+    <div class="card-body p-0 flex-grow-1" style="overflow-y: auto;">
+        <table class="table table-striped table-hover table-sm mb-0 fs-8">
+            <thead class="table-light sticky-top">
+                <tr>
+                    <th>#</th>
+                    {% if not user.is_client %}<th>Клиент</th>{% endif %}
+                    <th>Контейнер</th>
+                    <th>Отпр. №</th>
+                    <th>Уч.</th>
+                    <th>Дата отгрузки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for container in containers %}
+                <tr>
+                    <td class="text-muted">{{ forloop.counter }}</td>
+                    {% if not user.is_client %}<td class="text-muted">{{ container.client.name }}</td>{% endif %}
+                    <td class="fw-semibold">{{ container.number }}</td>
+                    <td>{{ container.send_number|default:"—" }}</td>
+                    <td>{{ container.area|default:"—" }}</td>
+                    <td class="text-muted">
+                        <i class="fas fa-calendar-alt me-1"></i>{{ container.shipped_date|date:"d.m.Y" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-2x mb-2 d-block"></i>Отгрузок нет
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

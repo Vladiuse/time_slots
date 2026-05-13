@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 
 from bookings.models import Booking, Slot
@@ -12,6 +13,7 @@ from users.models import User
 from .models import Container
 
 WEEKDAY_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+JOURNAL_FAKE_DAYS_BACK = 30
 
 
 @login_required
@@ -52,3 +54,23 @@ def containers_list(request: HttpRequest) -> HttpResponse:
         "date_pills": date_pills,
     }
     return render(request, "containers/container_list.html", content)
+
+
+@login_required
+def containers_journal(request: HttpRequest) -> HttpResponse:
+    containers = (
+        Container.objects.select_related("client")
+        .filter(status=Container.Status.PICKED_UP)
+        .order_by("-number")
+    )
+    assert isinstance(request.user, User)  # noqa: S101
+    if request.user.is_client:
+        containers = containers.filter(client=request.user.client_account.client)
+
+    today = timezone.localdate()
+    containers_list = list(containers)
+    for container in containers_list:
+        days_back = random.randint(1, JOURNAL_FAKE_DAYS_BACK)  # noqa: S311
+        container.shipped_date = today - timedelta(days=days_back)
+
+    return render(request, "containers/journal_list.html", {"containers": containers_list})
