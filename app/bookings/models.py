@@ -42,6 +42,8 @@ class Slot(models.Model):
             return True
         if self.date < now.date():
             return False
+        if self.end_time <= self.start_time:
+            return True
         return self.end_time > now.time()
 
     @property
