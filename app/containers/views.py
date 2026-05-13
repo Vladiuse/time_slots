@@ -26,7 +26,11 @@ def containers_list(request: HttpRequest) -> HttpResponse:
         )
         .order_by("start_time")
     )
-    containers = Container.objects.select_related("client").order_by("client__name", "number")
+    containers = (
+        Container.objects.select_related("client")
+        .exclude(status=Container.Status.PICKED_UP)
+        .order_by("client__name", "number")
+    )
     assert isinstance(request.user, User) # noqa: S101
     if request.user.is_client:
         containers = containers.filter(client=request.user.client_account.client)
